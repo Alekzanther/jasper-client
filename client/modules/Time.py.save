@@ -21,7 +21,7 @@ def handle(text, mic, profile):
     tz = getTimezone(profile)
     now = datetime.datetime.now(tz=tz)
     service = DateService()
-    response = str(now.hour) + " " + str(now.minute)  #service.convertTime(now)
+    response = dateT
     mic.say("Klockan är %s just nu." % response)
 
 

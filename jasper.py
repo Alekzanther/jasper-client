@@ -107,11 +107,13 @@ class Jasper(object):
                        stt_engine_class.get_active_instance())
 
     def run(self):
+	reload(sys)
+	sys.setdefaultencoding('utf-8')
         if 'first_name' in self.config:
-            salutation = ("How can I be of service, %s?"
+            salutation = ("Hur kan jag stå till tjänst, %s?"
                           % self.config["first_name"])
         else:
-            salutation = "How can I be of service?"
+            salutation = "Hur kan jag stå till tjänst?"
         self.mic.say(salutation)
 
         conversation = Conversation("JASPER", self.mic, self.config)

@@ -3,8 +3,9 @@ import feedparser
 from client import app_utils
 import re
 from semantic.numbers import NumberService
+import sys
 
-WORDS = ["NEWS", "YES", "NO", "FIRST", "SECOND", "THIRD"]
+WORDS = ["NYHETER", "JA", "NEJ", "FÖRSTA", "ANDRA", "TREDJE"]
 
 PRIORITY = 3
 
@@ -19,7 +20,7 @@ class Article:
 
 
 def getTopArticles(maxResults=None):
-    d = feedparser.parse("http://news.google.com/?output=rss")
+    d = feedparser.parse("http://news.google.se/?output=rss")
 
     count = 0
     articles = []
@@ -44,7 +45,7 @@ def handle(text, mic, profile):
         profile -- contains information related to the user (e.g., phone
                    number)
     """
-    mic.say("Pulling up the news")
+    mic.say("Ett ögonblick. Hämtar nyheterna.")
     articles = getTopArticles(maxResults=3)
     titles = [" ".join(x.title.split(" - ")[:-1]) for x in articles]
     all_titles = "... ".join(str(idx + 1) + ")" +
@@ -64,7 +65,7 @@ def handle(text, mic, profile):
         send_all = not chosen_articles and app_utils.isPositive(text)
 
         if send_all or chosen_articles:
-            mic.say("Sure, just give me a moment")
+            mic.say("Visst, ge mig en sekund")
 
             if profile['prefers_email']:
                 body = "<ul>"
@@ -87,38 +88,40 @@ def handle(text, mic, profile):
                     else:
                         if not app_utils.emailUser(profile, SUBJECT="",
                                                    BODY=article_link):
-                            mic.say("I'm having trouble sending you these " +
-                                    "articles. Please make sure that your " +
-                                    "phone number and carrier are correct " +
-                                    "on the dashboard.")
+                            mic.say("Jag har problem att skicka artiklarna. Tyvärr. " +
+                                    "Du behöver se till att inställningarna för meddelanden är rätt.")
                             return
 
             # if prefers email, we send once, at the end
             if profile['prefers_email']:
                 body += "</ul>"
                 if not app_utils.emailUser(profile,
-                                           SUBJECT="Your Top Headlines",
+                                           SUBJECT="Hugo här, dina nyheter",
                                            BODY=body):
-                    mic.say("I'm having trouble sending you these articles. " +
-                            "Please make sure that your phone number and " +
-                            "carrier are correct on the dashboard.")
+                    mic.say("Jag har problem att skicka artiklarna. " +
+                            "Se till att dina mail-uppgifter stämmer och " +
+                            "att jag kan skicka mail ordentligt.")
                     return
 
-            mic.say("All set")
+            mic.say("Packat och klart.")
 
         else:
 
-            mic.say("OK I will not send any articles")
+            mic.say("Okej. Jag skickar inga artiklar.")
 
     if 'phone_number' in profile:
-        mic.say("Here are the current top headlines. " + all_titles +
-                ". Would you like me to send you these articles? " +
-                "If so, which?")
+	
+        mic.say("Här är alla toppnyheter.")
+	#reload(sys)
+	#sys.setdefaultencoding('utf-8')
+	print all_titles
+	mic.say(all_titles)
+	mic.say("Ska jag skicka artiklarna? Om så, vilka?")
         handleResponse(mic.activeListen())
 
     else:
         mic.say(
-            "Here are the current top headlines. " + all_titles)
+            "Här är de senaste nyheterna från världen. " + all_titles)
 
 
 def isValid(text):
@@ -128,4 +131,4 @@ def isValid(text):
         Arguments:
         text -- user-input, typically transcribed speech
     """
-    return bool(re.search(r'\b(news|headline)\b', text, re.IGNORECASE))
+    return bool(re.search(r'\b(nyheterna|nyheter)\b', text, re.IGNORECASE))

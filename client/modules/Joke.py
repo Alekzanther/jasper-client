@@ -3,7 +3,7 @@ import random
 import re
 from client import jasperpath
 
-WORDS = ["JOKE", "KNOCK KNOCK"]
+WORDS = ["SKÄMT", "ROLIGT", "KNACK KNACK"]
 
 
 def getRandomJoke(filename=jasperpath.data('text', 'JOKES.txt')):
@@ -43,7 +43,7 @@ def handle(text, mic, profile):
     """
     joke = getRandomJoke()
 
-    mic.say("Knock knock")
+    mic.say("Knack knack")
 
     def firstLine(text):
         mic.say(joke[0])
@@ -63,4 +63,4 @@ def isValid(text):
         Arguments:
         text -- user-input, typically transcribed speech
     """
-    return bool(re.search(r'\bjoke\b', text, re.IGNORECASE))
+    return bool(re.search(ur'\bskämt|roligt|knack knack\b', text, re.IGNORECASE))

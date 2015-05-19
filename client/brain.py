@@ -74,8 +74,8 @@ class Brain(object):
                     except:
                         self._logger.error('Failed to execute module',
                                            exc_info=True)
-                        self.mic.say("I'm sorry. I had some trouble with " +
-                                     "that operation. Please try again later.")
+                        self.mic.say("Jag är ledsen. Något gick fel. " +
+                                     " Vänligen försök igen senare.")
                     else:
                         self._logger.debug("Handling of phrase '%s' by " +
                                            "module '%s' completed", text,
