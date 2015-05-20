@@ -10,7 +10,7 @@ WORDS = ["T\xc4ND", "SL\xc4CK","SL\xc4CKT","SL\xc4KT", "BELYSNING", "BELYSNINGEN
 
 def handle(text, mic, profile):
     """
-        Reports the current time based on the user's timezone.
+        TODO: Fetch openhab settings from profile.
 
         Arguments:
         text -- user-input, typically transcribed speech
@@ -19,23 +19,28 @@ def handle(text, mic, profile):
                    number)
     """
     mic.say("Jag ska försöka...")
-    action = "OFF"
+    baseaction = """curl --header "Content-Type: text/plain" --request POST --data """
+    action = '"OFF"'
+    sayAction = "Släcker"
     if bool(re.search(ur'\bt\xc4nd|p\xc3\b', text, re.IGNORECASE)):
-        action = "ON"
+        action = '"ON"'
+        sayAction = "Tänder"
+    baseaction += action
+    
     if bool(re.search(ur'\balla|lampor\b', text, re.IGNORECASE)):
-        mic.say("Okej. Släcker alla lampor.")
-        os.system("""curl --header "Content-Type: text/plain" --request POST --data """" + action + """" http://10.1.1.136:8080/rest/items/Lights/""")
+        mic.say("Okej. " + sayAction + " alla lampor.")
+        os.system(baseaction + """ http://10.1.1.136:8080/rest/items/Lights/""")
         """ släcker allt """
     elif bool(re.search(ur'\bk\xd6k|k\xd6ket|k\xd6kslampor\b',text, re.IGNORECASE)):
-        mic.say("Javisst. Jag släcker i köket.")
-        os.system("""curl --header "Content-Type: text/plain" --request POST --data """" + action + """" http://10.1.1.136:8080/rest/items/Kitchen/""")
+        mic.say("Javisst. Jag " + sayAction + " i köket.")
+        os.system(baseaction + """ http://10.1.1.136:8080/rest/items/Kitchen/""")
         """" släcker köket """
     elif bool(re.search(ur'\bvardagsrum|vardagsrummet\b', text, re.IGNORECASE)):
-        mic.say("Japp. Släcker i vardagsrummet")
-        os.system("""curl --header "Content-Type: text/plain" --request POST --data """" + action + """" http://10.1.1.136:8080/rest/items/Livingroom_Window_Light/""")
-        os.system("""curl --header "Content-Type: text/plain" --request POST --data """" + action + """" http://10.1.1.136:8080/rest/items/Livingroom_Ceiling_Window/""")
-        os.system("""curl --header "Content-Type: text/plain" --request POST --data """" + action + """" http://10.1.1.136:8080/rest/items/Livingroom_Ceiling/""")
-        os.system("""curl --header "Content-Type: text/plain" --request POST --data """" + action + """" http://10.1.1.136:8080/rest/items/Livingroom_Aquarium/""")
+        mic.say("Japp. " + sayAction + " i vardagsrummet")
+        os.system(baseaction + """ http://10.1.1.136:8080/rest/items/Livingroom_Window_Light/""")
+        os.system(baseaction + """ http://10.1.1.136:8080/rest/items/Livingroom_Ceiling_Window/""")
+        os.system(baseaction + """ http://10.1.1.136:8080/rest/items/Livingroom_Ceiling/""")
+        os.system(baseaction + """ http://10.1.1.136:8080/rest/items/Livingroom_Aquarium/""")
         """ släcker vardagsrum """
 
 def isValid(text):
